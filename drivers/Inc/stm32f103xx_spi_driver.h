@@ -40,7 +40,7 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi );
  * Init and De-init
  */
 
-void SPI_Init(SPI_RegDef_t *pSPIHandle);
+void SPI_Init(SPI_Handle_t *pSPIHandle);
 void SPI_DeInit(SPI_RegDef_t *pSPIx);
 
 /*
