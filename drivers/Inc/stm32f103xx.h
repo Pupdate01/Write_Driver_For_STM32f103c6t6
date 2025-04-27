@@ -170,6 +170,23 @@ typedef struct
 }EXTI_RegDef_t;
 
 
+/*
+ * Peripheral register definition structure for SPI
+ */
+
+typedef struct {
+	__vo uint32_t CR1;			//SPI control register 1
+	__vo uint32_t CR2;			//SPI control register 2
+	__vo uint32_t SR;			//SPI status register
+	__vo uint32_t DR;			//SPI data register
+	__vo uint32_t CRCPR;		//SPI CRC polynomial register
+	__vo uint32_t RXCRCR;		//SPI RX CRC register
+	__vo uint32_t TXCRCR;		//SPI TX CRC register
+	__vo uint32_t I2FCFGR;		//SPI_I2S configuration register
+	__vo uint32_t I2SPR;		//SPI_I2S prescaler register
+
+}SPI_RegDef_t;
+
 /*********************************
  * Peripheral definitions
  * ***********************************************/
@@ -185,6 +202,10 @@ typedef struct
 #define RCC				((RCC_RegDef_t*)RCC_BASEADDR)
 #define EXTI			((EXTI_RegDef_t*)EXTI_BASEADDR)
 #define AFIO			((AFIO_RegDef_t*)AFIO_BASEADDR)
+
+#define SPI1			((SPI_RegDef_t*)SPI1_BASEADDR)
+#define SPI2			((SPI_RegDef_t*)SPI2_I2S_BASEADDR)
+#define SPI3			((SPI_RegDef_t*)SPI3_I2S_BASEADDR)
 
 /*
  * Clock Enable Macros for GPIOx peripherals
