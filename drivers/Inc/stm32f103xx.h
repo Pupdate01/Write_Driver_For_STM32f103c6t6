@@ -290,6 +290,13 @@ typedef struct {
 #define GPIOG_REG_RESET()		do{ (RCC->APB2ENR |= ( 1 << 8)); (RCC->APB2ENR &= ~( 1 << 8)); } while(0)
 
 /*
+ * Macro to reset SPIx peripherals
+ */
+#define SPI1_REG_RESET()		do{ (RCC->APB2ENR |= ( 1 << 12 )); (RCC->APB2ENR &= ~(1 << 12 ));}while(0)
+#define SPI2_REG_RESET()		do{	(RCC->APB1ENR |= ( 1 << 14 )); (RCC->APB1ENR &= ~(1 << 14 ));}while(0)
+#define SPI3_REG_RESET()		do{	(RCC->APB1ENR |= ( 1 << 15 )); (RCC->APB1ENR &= ~(1 << 15 ));}while(0)
+
+/*
  * return port code for given GPIOx base address
  */
 
