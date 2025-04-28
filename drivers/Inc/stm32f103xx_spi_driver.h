@@ -112,4 +112,11 @@ void SPI_IRQHandling(SPI_Handle_t *pHandle);
 #define SPI_CPHA_LO 						0
 #define SPI_CPHA_HI							1
 
+/*
+ * SPI related status flags definitions
+ */
+#define SPI_TXE_FLAG						(1 << SPI_SR_TXE)
+#define SPI_RXNE_FLAG						(1 << SPI_SR_RXNE)
+#define SPI_BSY_FLAG						(1 << SPI_SR_BSY)
+
 #endif /* INC_STM32F103XX_SPI_DRIVER_H_ */
