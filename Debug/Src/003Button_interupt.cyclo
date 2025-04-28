@@ -1,3 +1,0 @@
-../Src/003Button_interupt.c:15:6:delay	2
-../Src/003Button_interupt.c:20:5:main	1
-../Src/003Button_interupt.c:53:6:EXTI9_5_IRQHandler	1
