@@ -138,7 +138,9 @@ void SPI_DeInit(SPI_RegDef_t *pSPIx){
 		SPI3_REG_RESET();
 	}
 }
-
+/*
+ * API check Flag Status
+ */
 
 uint8_t SPI_GetFlagStatus(SPI_RegDef_t *pSPIx , uint32_t FlagName)
 {
@@ -205,9 +207,34 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len )
  *
  * @return						- none
  *
- * @Note						- none
+ * @Note						- This is block call
  */
-void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t Len );
+void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t Len )
+{
+	while(Len > 0)
+	{
+		//1. wait until Rx Buffet is non Empty
+		while(SPI_GetFlagStatus(pSPIx, SPI_RXNE_FLAG ) == FLAG_RESET );
+
+		//2. check DFF bit in CR1
+		if( (pSPIx->CR1) & (1 << SPI_CR1_DFF)  )
+		{
+			//16 bits DFF
+			//1. read data from DR
+
+			*((uint16_t*)pRxBuffer) = pSPIx->DR;
+			Len -=2;
+			pRxBuffer += 2;
+		} else
+		{
+			// 8 bits DFF
+
+			*pRxBuffer = pSPIx->DR;
+			Len--;
+			pRxBuffer++;
+		}
+	}
+}
 
 /*
  * IQR Configuration and ISR handling
