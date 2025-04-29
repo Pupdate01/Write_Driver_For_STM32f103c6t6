@@ -179,12 +179,12 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len )
 			//1. load data in to the DR
 			pSPIx->DR = *((uint16_t*)pTxBuffer);
 			Len -= 2;
-			(uint16_t*)pTxBuffer++;
+			pTxBuffer += 2;
 		} else {
 			//8 bit DFF
 			pSPIx->DR = *pTxBuffer;
 			Len--;
-			(uint16_t*)pTxBuffer++;
+			pTxBuffer++;
 		}
 
 	}
