@@ -30,9 +30,9 @@
 /*
  * ARM Cortex M3 Processor Priority Register Address Calculation
  */
-#define NVIC_PR_BASE_ADDR 				((__vo uint32_t*)0xE000E400)
+#define NVIC_PRIOR_BASE_ADDR 				((__vo uint32_t*)0xE000E400)
 
-#define NO_PR_BITS_IMPLEMENTED			4
+#define NO_PRIOR_BITS_IMPLEMENTED			4
 
 
 /*	Base Address of Flash and SRAM memories	*/
