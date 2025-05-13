@@ -252,9 +252,9 @@ typedef struct {
 #define GPIOB_PCLK_DI()			(RCC->APB2ENR &= ~( 1 << 3)) 	//IO port B clock enable
 #define GPIOC_PCLK_DI()			(RCC->APB2ENR &= ~( 1 << 4)) 	//IO port C clock enable
 #define GPIOD_PCLK_DI()			(RCC->APB2ENR &= ~( 1 << 5)) 	//IO port D clock enable
-#define GPIOE_PCLK_DI()			(RCC->APB2ENR |= ( 1 << 6)) 	//IO port E clock enable
-#define GPIOF_PCLK_DI()			(RCC->APB2ENR |= ( 1 << 7)) 	//IO port F clock enable
-#define GPIOG_PCLK_DI()			(RCC->APB2ENR |= ( 1 << 8)) 	//IO port G clock enable
+#define GPIOE_PCLK_DI()			(RCC->APB2ENR &= ~( 1 << 6)) 	//IO port E clock enable
+#define GPIOF_PCLK_DI()			(RCC->APB2ENR &= ~( 1 << 7)) 	//IO port F clock enable
+#define GPIOG_PCLK_DI()			(RCC->APB2ENR &= ~( 1 << 8)) 	//IO port G clock enable
 
 /*
  * Clock Disable Macros for I2Cx peripherals
