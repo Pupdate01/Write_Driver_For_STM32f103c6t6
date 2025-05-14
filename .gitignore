@@ -1,0 +1,13 @@
+# Ignore STM32 build files
+*.o
+*.d
+*.su
+*.elf
+*.map
+*.mk
+
+# Ignore STM32CubeIDE folders
+/build/
+Debug/
+Release/
+drivers/Src/subdir.mk
