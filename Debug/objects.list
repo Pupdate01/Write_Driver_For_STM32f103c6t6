@@ -1,3 +1,4 @@
 "./Src/003Button_interupt.o"
 "./Startup/startup_stm32f103c6tx.o"
+"./drivers/Src/stm32f103xx_afio_driver.o"
 "./drivers/Src/stm32f103xx_gpio_driver.o"
