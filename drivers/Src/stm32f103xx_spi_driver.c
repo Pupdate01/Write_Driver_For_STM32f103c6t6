@@ -67,6 +67,9 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi )
  */
 void SPI_Init(SPI_Handle_t *pSPIHandle)
 {
+	//peripheral clock enable
+	SPI_PeriClockControl(pSPIHandle->pSPIx,ENABLE);
+
 	//First Lets configure the SPI_CR1 register
 
 	uint32_t tempReg = 0 ;

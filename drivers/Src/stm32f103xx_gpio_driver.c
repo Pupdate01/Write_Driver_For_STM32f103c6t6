@@ -84,6 +84,9 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnorDi )
  */
 void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 {
+	//peripheral clock enable
+	GPIO_PeriClockControl(pGPIOHandle->pGPIOx,ENABLE);
+
 	uint32_t temp;
 	uint8_t index1,index2;
 	index1 	= pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8;
