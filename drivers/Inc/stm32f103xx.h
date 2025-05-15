@@ -401,6 +401,8 @@ typedef struct {
 
 
 
-#include "stm32f103xx_gpio_driver.h"
+#include"stm32f103xx_gpio_driver.h"
+#include"stm32f103xx_spi_driver.h"
+#include"stm32f1xx_afio_driver.h"
 
 #endif /* INC_STM32F103XX_H_ */
