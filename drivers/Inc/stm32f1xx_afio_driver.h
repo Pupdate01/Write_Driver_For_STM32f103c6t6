@@ -36,6 +36,27 @@ void ADC2_ETRGREG_ControlRemap(uint8_t EnorDi);
 void SWJ_CFG(uint8_t SWJCFGVal);				/*Possible value from @SWJCFGVal*/
 
 /*
+ * These API get flag remap of register
+ */
+uint32_t Get_SPI1_RM();
+uint32_t Get_I2C_RM();
+uint32_t Get_UART1_RM();
+uint32_t Get_UART2_RM();
+uint32_t Get_UART3_RM();
+uint32_t Get_TIM1_RM();
+uint32_t Get_TIM2_RM();
+uint32_t Get_TIM3_RM();
+uint32_t Get_TIM4_RM();
+uint32_t Get_CAN_RM();
+uint32_t Get_PD01_RM();
+uint32_t Get_TIM5CH4_RM();
+uint32_t Get_ADC1_ETRGINJ_RM();
+uint32_t Get_ADC1_ETRGREG_RM();
+uint32_t Get_ADC2_ETRGINJ_RM();
+uint32_t Get_ADC2_ETRGREG_RM();
+uint32_t Get_SWJ_CFG();
+
+/*
  * Macro for enable SPI1,I2C1, UART1, UART2,TIM4, PD1,TIM5CH4, ADC1, ADC2
  */
 #define SPI1_REMAP_EN()					(AFIO->MAPR	|= (1 << 0))
