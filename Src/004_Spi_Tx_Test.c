@@ -103,6 +103,10 @@ int main(void){
 	//This function is used to initialize the SPI1 peripheral parameter
 	SPI1_Init();
 
+	//Enable the SPI1 peripheral
+	SPI_PeripheralControl(SPI1,ENABLE);
+
+	//to sent data
 	SPI_SendData(SPI1, (uint8_t*)user_data, strlen(user_data));
 
 	while(1);

@@ -58,6 +58,11 @@ void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
 void SPI_IRQHandling(SPI_Handle_t *pHandle);
 
 /*
+ * Other Peripheral Control APIS
+ */
+void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
+
+/*
  * @SPI_DEVICEMODE
  * SPI Mode possible modes
  */

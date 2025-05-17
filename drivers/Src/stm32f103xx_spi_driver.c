@@ -288,3 +288,25 @@ void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
  */
 void SPI_IRQHandling(SPI_Handle_t *pHandle);
 
+/***********************************************************************************
+ * @fn							- SPI_IRQHandling
+ *
+ * @brief						-
+ *
+ * param[in]					- Base address of the SPI peripheral
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+
+void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi){
+	if(EnorDi == ENABLE){
+		pSPIx->CR1 |= (1 << SPI_CR1_SPE);
+	} else {
+		pSPIx->CR1 &= ~(1<< SPI_CR1_SPE);
+	}
+}
+
