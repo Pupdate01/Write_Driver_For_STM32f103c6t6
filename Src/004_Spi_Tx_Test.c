@@ -103,6 +103,9 @@ int main(void){
 	//This function is used to initialize the SPI1 peripheral parameter
 	SPI1_Init();
 
+	//This makes NSS signal internally high and avoid MODF error
+	SPI_SSIConfig(SPI1, ENABLE);
+
 	//Enable the SPI1 peripheral
 	SPI_PeripheralControl(SPI1,ENABLE);
 
