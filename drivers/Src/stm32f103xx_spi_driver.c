@@ -216,14 +216,14 @@ void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t Len )
 {
 	while(Len > 0)
 	{
-		//1. wait until Rx Buffet is non Empty
+		//1. wait until RXNE Buffet is non Empty
 		while(SPI_GetFlagStatus(pSPIx, SPI_RXNE_FLAG ) == FLAG_RESET );
 
 		//2. check DFF bit in CR1
 		if( (pSPIx->CR1) & (1 << SPI_CR1_DFF)  )
 		{
 			//16 bits DFF
-			//1. read data from DR
+			//1. read data from DR to RxBuffer Address
 
 			*((uint16_t*)pRxBuffer) = pSPIx->DR;
 			Len -=2;
@@ -329,4 +329,94 @@ void SPI_SSIConfig(SPI_RegDef_t *pSPIx, uint8_t EnorDi){
 	} else {
 		pSPIx -> CR1 &= ~( 1 << SPI_CR1_SSI );
 	}
+}
+
+/***********************************************************************************
+ * @fn							- SPI_SSOEConfig
+ *
+ * @brief						-
+ *
+ * param[in]					- SPI_RegDef_t
+ * param[in]					- Enable or Diable
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+void SPI_SSOEConfig(SPI_RegDef_t *pSPIx, uint8_t EnorDi){
+	if (EnorDi == ENABLE){
+			pSPIx -> CR2 |= ( 1 << SPI_CR2_SSOE );
+		} else {
+			pSPIx -> CR2 &= ~( 1 << SPI_CR2_SSOE );
+		}
+
+}
+
+/***********************************************************************************
+ * @fn							- SPI_SendDataIT
+ *
+ * @brief						-
+ *
+ * param[in]					- SPI_RegDef_t
+ * param[in]					- Enable or Diable
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+uint8_t SPI_SendDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len ){
+	uint8_t state = pSPIHandle->RxState;
+
+	if(state != SPI_BUSY_IN_RX){
+		//1. save the Tx buffer address and length information in some global variable
+		pSPIHandle -> pTxBuffer = pTxBuffer;
+		pSPIHandle -> TxLen	= Len;
+		//2. Mask the SPI state as busy in transmission so that
+		//no other code can take over same SPI peripheral until transmission is over
+
+		pSPIHandle -> TxState = SPI_BUSY_IN_TX;
+
+		//3. Enable the TXEIE control bit to get interrupt whenever TXE flag is set in SR'
+		pSPIHandle -> pSPIx -> CR2 |= (1 << SPI_CR2_TXEIE );
+
+	}
+	//4. Data Transmission will be handled by the ISR code (will implement later)
+
+	return state;
+}
+
+/***********************************************************************************
+ * @fn							- SPI_SSIConfig
+ *
+ * @brief						-
+ *
+ * param[in]					- SPI_RegDef_t
+ * param[in]					- Enable or Diable
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+uint8_t SPI_ReceiveDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t Len ){
+	uint8_t state = pSPIHandle->TxState;
+
+		if(state != SPI_BUSY_IN_TX){
+			//1. save the Tx buffer address and length information in some global variable
+			pSPIHandle -> pRxBuffer = pRxBuffer;
+			pSPIHandle -> RxLen	= Len;
+			//2. Mask the SPI state as busy in transmission so that
+			//no other code can take over same SPI peripheral until transmission is over
+
+			pSPIHandle -> RxState = SPI_BUSY_IN_RX;
+
+			//3. Enable the TXEIE control bit to get interrupt whenever TXE flag is set in SR'
+			pSPIHandle -> pSPIx -> CR2 |= (1 << SPI_CR2_RXNEIE );
+
+		}
+		//4. Data Transmission will be handled by the ISR code (will implement later)
+
+		return state;
 }

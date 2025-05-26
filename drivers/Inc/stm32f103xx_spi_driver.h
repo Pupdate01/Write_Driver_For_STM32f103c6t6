@@ -29,7 +29,23 @@ typedef struct
 {
 	SPI_RegDef_t *pSPIx;		/*This holds the base address of SPIx(x:1,2,3) peripheral*/
 	SPI_Config_t SPIConfig; 	/*This holds SPI configuration settings*/
+	uint8_t		 *pTxBuffer;	/*To store the app. Tx buffer address*/
+	uint8_t		 *pRxBuffer;	/*To store the app. Rx buffer address*/
+	uint32_t	 TxLen;			/*To store the Tx Length*/
+	uint32_t	 RxLen;			/*To store the Rx Length*/
+	uint8_t		 TxState;		/*To store the Tx State*/
+	uint8_t		 RxState;		/*To store the Rx State*/
 }SPI_Handle_t;
+
+/*
+ * SPI application state
+ */
+#define SPI_READY 			0
+#define SPI_BUSY_IN_RX		1
+#define SPI_BUSY_IN_TX		2
+
+#define SPI_BUSY_FLAG		1
+
 
 /*
  * Peripheral Clock setup
@@ -49,6 +65,11 @@ void SPI_DeInit(SPI_RegDef_t *pSPIx);
 void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len );
 void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t Len );
 
+/*
+ * Data read and write using Interrupt
+ */
+uint8_t SPI_SendDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len );
+uint8_t SPI_ReceiveDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t Len );
 
 /*
  * IQR Configuration and ISR handling
@@ -62,6 +83,7 @@ void SPI_IRQHandling(SPI_Handle_t *pHandle);
  */
 void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
 void SPI_SSIConfig(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
+void SPI_SSOEConfig(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
 
 /*
  * @SPI_DEVICEMODE
