@@ -24,13 +24,13 @@ int main()
 
 
 	//Configure GPIOLed PA8 for push-pull mode
-	GPIOLed.pGPIOx = GPIOA;
-	GPIOLed.GPIO_PinConfig.GPIO_PinNumber 	= GPIO_PIN_NO_8;
+	GPIOLed.pGPIOx = GPIOC;
+	GPIOLed.GPIO_PinConfig.GPIO_PinNumber 	= GPIO_PIN_NO_13;
 	GPIOLed.GPIO_PinConfig.GPIO_PinMode   	= GPIO_MODE_OUT_10MHz;
 	GPIOLed.GPIO_PinConfig.GPIO_CNF			= GPIO_GP_OP_PP;
 
 	// Enable GPIOA
-	GPIO_PeriClockControl(GPIOA, ENABLE);
+	GPIO_PeriClockControl(GPIOC, ENABLE);
 
 	// Init GPIOLed
 	GPIO_Init(&GPIOLed);
@@ -51,7 +51,7 @@ int main()
 	{
 		if(	GPIO_ReadFromInputPin(GPIOB, GPIO_PIN_NO_12) == BTN_PRESSED ){
 			delay();
-			GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_8);
+			GPIO_ToggleOutputPin(GPIOC, GPIO_PIN_NO_13);
 		}
 	}
 	return 0;

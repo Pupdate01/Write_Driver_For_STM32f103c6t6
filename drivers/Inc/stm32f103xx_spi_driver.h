@@ -44,7 +44,7 @@ typedef struct
 #define SPI_BUSY_IN_RX		1
 #define SPI_BUSY_IN_TX		2
 
-#define SPI_BUSY_FLAG		1
+#define SPI_BUSY_FLAG		(1 << SPI_SR_BSY)
 
 
 /*

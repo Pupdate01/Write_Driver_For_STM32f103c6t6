@@ -44,15 +44,15 @@ void SPI1_GPIOs(void){
 		//Config GPIOA
 		SPIPins.pGPIOx = GPIOA;
 		SPIPins.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT_10MHz ;
-		SPIPins.GPIO_PinConfig.GPIO_CNF		= GPIO_GP_OP_PP;
+		SPIPins.GPIO_PinConfig.GPIO_CNF		= GPIO_ALTFN_OP_PP;
 
 		//CLK
 		SPIPins.GPIO_PinConfig.GPIO_PinNumber = 5;
 		GPIO_Init(&SPIPins);
 
 		//MISO
-		SPIPins.GPIO_PinConfig.GPIO_PinNumber = 6;
-		GPIO_Init(&SPIPins);
+//		SPIPins.GPIO_PinConfig.GPIO_PinNumber = 6;
+//		GPIO_Init(&SPIPins);
 
 		//MOSI
 		SPIPins.GPIO_PinConfig.GPIO_PinNumber = 7;
@@ -69,11 +69,11 @@ void SPI1_GPIOs(void){
 		//Config GPIOA and GPIOB
 		SPIPins.pGPIOx = GPIOB;
 		SPIPins.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT_10MHz ;
-		SPIPins.GPIO_PinConfig.GPIO_CNF		= GPIO_GP_OP_PP;
+		SPIPins.GPIO_PinConfig.GPIO_CNF		= GPIO_ALTFN_OP_PP;
 
 		SPIPinsA.pGPIOx = GPIOA;
 		SPIPinsA.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT_10MHz ;
-		SPIPinsA.GPIO_PinConfig.GPIO_CNF		= GPIO_GP_OP_PP;
+		SPIPinsA.GPIO_PinConfig.GPIO_CNF		= GPIO_ALTFN_OP_PP;
 
 		//CLK
 		SPIPins.GPIO_PinConfig.GPIO_PinNumber = 3;
@@ -97,6 +97,7 @@ void SPI1_GPIOs(void){
 void SPI1_Init(void){
 	SPI_Handle_t SPI1hanle;
 
+	SPI1hanle.pSPIx 					= SPI1;
 	SPI1hanle.SPIConfig.SPI_BusConfig 	= SPI_BUS_CONFIG_FD;
 	SPI1hanle.SPIConfig.SPI_DeviceMode 	= SPI_DEVICE_MODE_MASTER;
 	SPI1hanle.SPIConfig.SPI_SclkSpeed	= SPI_FPCLK_DIV8;		//generate sclk 2mhz
@@ -130,7 +131,7 @@ int main(void){
 	char user_data[] = "Hello World";
 	//This function is used to initialize the GPIO pins to behave as SPI1 pins
 	SPI1_GPIOs();
-
+	//AFIO_PCLK_EN();
 	//This function is used to initialize the SPI1 peripheral parameter
 	SPI1_Init();
 
@@ -142,17 +143,17 @@ int main(void){
 	 */
 	SPI_SSOEConfig(SPI1, ENABLE);
 
-	GPIO_Handle_t GPIOBtn;
-	GPIO_ButtonInit(&GPIOBtn, GPIOA, GPIO_PIN_NO_12 );
+//	GPIO_Handle_t GPIOBtn;
+//	GPIO_ButtonInit(&GPIOBtn, GPIOA, GPIO_PIN_NO_12 );
 	while(1){
-		while( !GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_12));
+		//while( !GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_12));
 		delay();
 
 		//Enable the SPI1 peripheral
 		SPI_PeripheralControl(SPI1,ENABLE);
 
 		//first send length information
-		uint8_t datalen = sizeof(user_data);
+		uint8_t datalen = strlen(user_data);
 		SPI_SendData(SPI1,&datalen,1);
 
 		//to sent data
@@ -160,7 +161,7 @@ int main(void){
 
 		//lets confỉm SPI not busy
 
-		while( SPI_GetFlagStatus(SPI1, SPI_BUSY_FLAG));
+		while( SPI_GetFlagStatus(SPI1, SPI_BUSY_FLAG) );
 		//Enable the SPI1 peripheral
 		SPI_PeripheralControl(SPI1,DISABLE);
 	}
