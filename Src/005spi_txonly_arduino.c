@@ -50,10 +50,6 @@ void SPI1_GPIOs(void){
 		SPIPins.GPIO_PinConfig.GPIO_PinNumber = 5;
 		GPIO_Init(&SPIPins);
 
-		//MISO
-//		SPIPins.GPIO_PinConfig.GPIO_PinNumber = 6;
-//		GPIO_Init(&SPIPins);
-
 		//MOSI
 		SPIPins.GPIO_PinConfig.GPIO_PinNumber = 7;
 		GPIO_Init(&SPIPins);
@@ -61,6 +57,13 @@ void SPI1_GPIOs(void){
 		//NSS
 		SPIPins.GPIO_PinConfig.GPIO_PinNumber = 4;
 		GPIO_Init(&SPIPins);
+
+		//MISO
+		SPIPins.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_IN ;
+		SPIPins.GPIO_PinConfig.GPIO_CNF		= GPIO_IP_PUPD;
+		SPIPins.GPIO_PinConfig.GPIO_PinNumber = 6;
+		GPIO_Init(&SPIPins);
+
 	} else
 	{
 		GPIO_Handle_t SPIPins;
@@ -116,8 +119,8 @@ void GPIO_ButtonInit(GPIO_Handle_t *GPIOBtn,GPIO_RegDef_t *pGPIO, uint8_t PinNum
 	//Configure GPIO Button for push-pull mode
 	GPIOBtn->pGPIOx = pGPIO;
 	GPIOBtn->GPIO_PinConfig.GPIO_PinNumber 	  = PinNumber;
-	GPIOBtn->GPIO_PinConfig.GPIO_PinMode	  = GPIO_MODE_OUT_10MHz;
-	GPIOBtn->GPIO_PinConfig.GPIO_CNF		  = GPIO_GP_OP_PP;
+	GPIOBtn->GPIO_PinConfig.GPIO_PinMode	  = GPIO_MODE_IN;
+	GPIOBtn->GPIO_PinConfig.GPIO_CNF		  = GPIO_IP_FLOAT;
 
 	//Enable GPIO
 	GPIO_PeriClockControl(pGPIO, ENABLE);
@@ -143,12 +146,11 @@ int main(void){
 	 */
 	SPI_SSOEConfig(SPI1, ENABLE);
 
-//	GPIO_Handle_t GPIOBtn;
-//	GPIO_ButtonInit(&GPIOBtn, GPIOA, GPIO_PIN_NO_12 );
+	GPIO_Handle_t GPIOBtn;
+	GPIO_ButtonInit(&GPIOBtn, GPIOA, GPIO_PIN_NO_12 );
 	while(1){
-		//while( !GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_12));
+		while(GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_12));
 		delay();
-
 		//Enable the SPI1 peripheral
 		SPI_PeripheralControl(SPI1,ENABLE);
 
