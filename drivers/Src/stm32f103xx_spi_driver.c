@@ -552,19 +552,19 @@ void spi_clearovrflag(SPI_RegDef_t *pSPIx) {
 
 void spi_closetransmission(SPI_Handle_t *pHandle) {
 	pHandle->pSPIx->CR2 &= ~(1 << SPI_CR2_TXEIE);
-	pHandle->pTxBuffer = NULL;
+	//pHandle->pTxBuffer = NULL;
 	pHandle->TxLen = 0;
 	pHandle->TxState = SPI_READY;
 }
 
 void spi_closereception(SPI_Handle_t *pHandle) {
 	pHandle->pSPIx->CR2 &= ~(1 << SPI_CR2_RXNEIE);
-	pHandle->pRxBuffer = NULL;
+	//pHandle->pRxBuffer = NULL;
 	pHandle->RxLen = 0;
 	pHandle->RxState = SPI_READY;
 }
 
-__attribute__((weak)) void SPI_ApplicationEventCallBack(SPI_Handle_t *pHanle,
-		uint8_t AppEv) {
+__weak void SPI_ApplicationEventCallBack(SPI_Handle_t *pHanle,uint8_t AppEv)
+{
 	//This is a weak implementation. The application may override this function
 }

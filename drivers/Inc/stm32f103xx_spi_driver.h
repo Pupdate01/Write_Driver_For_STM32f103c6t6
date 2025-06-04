@@ -86,6 +86,24 @@ void SPI_SSIConfig(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
 void SPI_SSOEConfig(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
 
 /*
+ * handle for Interrupt in SPI
+ */
+void spi_txe__interrupt_handle(SPI_Handle_t *pHandle);
+void spi_rxne__interrupt_handle(SPI_Handle_t *pHandle);
+void spi_ovr_err_interrupt_handle(SPI_Handle_t *pHandle);
+__weak void SPI_ApplicationEventCallBack(SPI_Handle_t *pHanle,uint8_t AppEv);
+void spi_closetransmission(SPI_Handle_t *pHandle);
+void spi_closereception(SPI_Handle_t *pHandle);
+
+/*
+ * Possible SPI Application events
+ */
+#define SPI_EVENT_TX_CMPLT   1
+#define SPI_EVENT_RX_CMPLT   2
+#define SPI_EVENT_OVR_ERR    3
+#define SPI_EVENT_CRC_ERR    4
+
+/*
  * @SPI_DEVICEMODE
  * SPI Mode possible modes
  */
