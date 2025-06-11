@@ -131,3 +131,97 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
  * @Note						- none
  ************************************************************************************/
 void I2C_DeInit(I2C_RegDef_t *pI2Cx);
+
+/***********************************************************************************
+ * @fn							- I2C_MasterSendData
+ *
+ * @brief						-
+ *
+ * param[in]					- I2C Handle
+ * param[in]					- data buffer
+ * param[in]					- len buffer
+ * param[in]					- SlaveAddr
+ * param[in]					- uint8_t
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+void I2C_MasterSendData(I2C_Handle_t *pI2CHandle,uint8_t *pTxbuffer, uint32_t Len, uint8_t SlaveAddr,uint8_t Sr)
+{
+	//1. Generation the start condition
+
+	//2. Confirm that start generation is completed by checking the SB flag in the SR1
+	//   Note: Until SB is cleared SCL will be stretched (pulled to LOW)
+
+	//3.  Send the address of the slave with r/nw bit set to w(0) (total 8 bits )
+
+	//4. Confirm that address phase is completed by checking the ADDR flag in SR1
+
+	//5. clear the ADDR flag according to its software sequence
+	//Note:Until ADDR is cleared SCL will be stretched (pulled to low)
+
+	//6.send the data until len becomes 0
+}
+
+
+// Other Peripheral Control APIS
+
+/***********************************************************************************
+ * @fn							- I2C_GenerateStartCondition
+ *
+ * @brief						- Enable bit Start in CR1
+ *
+ * param[in]					- I2C_RegDef
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+void I2C_GenerateStartCondition(I2C_RegDef_t *pI2Cx)
+{
+	pI2Cx->CR1 |= (1<<I2C_CR1_START);
+}
+
+/***********************************************************************************
+ * @fn							- I2C_GenerateStopCondition
+ *
+ * @brief						- Enable bit Stop in CR1
+ *
+ * param[in]					- I2C_RegDef
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+void I2C_GenerateStopCondition(I2C_RegDef_t *pI2Cx)
+{
+	pI2Cx->CR1 |= (1<<I2C_CR1_STOP);
+}
+
+/***********************************************************************************
+ * @fn							- I2C_GetFlagStatus
+ *
+ * @brief						- Get register is set or reset
+ *
+ * param[in]					- I2C_RegDef
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx , uint32_t FlagName)
+{
+	if(pI2Cx->CR1 & FlagName)
+	{
+		return FLAG_SET;
+	} else {
+		return FLAG_RESET;
+	}
+}
