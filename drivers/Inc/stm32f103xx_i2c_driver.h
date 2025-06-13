@@ -39,6 +39,13 @@ typedef struct
 }I2C_Handle_t;
 
 /*
+ * I2C appplication status
+ */
+#define I2C_READY			   	0
+#define I2C_BUSY_IN_RX			1
+#define I2C_BUSY_IN_TX			2
+
+/*
  * @I2C_SCLSpeed
  */
 #define I2C_SCL_SPEED_SM		100000
