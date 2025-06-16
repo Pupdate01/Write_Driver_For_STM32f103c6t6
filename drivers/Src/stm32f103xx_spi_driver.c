@@ -503,7 +503,6 @@ void spi_txe__interrupt_handle(SPI_Handle_t *pHandle) {
 		//this prevents interrupts from setting up of TXE flag
 		spi_closetransmission(pHandle);
 		SPI_ApplicationEventCallBack(pHandle, SPI_EVENT_TX_CMPLT);
-
 	}
 }
 

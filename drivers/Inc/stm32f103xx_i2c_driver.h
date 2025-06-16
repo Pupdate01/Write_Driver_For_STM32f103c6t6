@@ -19,7 +19,7 @@ typedef struct
 	uint8_t		I2C_DeviceAddress;
 	uint8_t		I2C_ACKControl;			// possible value : @I2C_ACKControl
 	uint16_t	I2C_FMDutyCycle;		// possible value : @I2C_FMDutyCycle
-}I2c_Config_t;
+}I2C_Config_t;
 
 /*
  * Handle structure for I2Cx peripheral
@@ -27,7 +27,7 @@ typedef struct
 typedef struct
 {
 	I2C_RegDef_t 	*pI2Cx;
-	I2c_Config_t 	I2C_Config;
+	I2C_Config_t 	I2C_Config;
 	uint8_t			*pTxBuffer;	//Tx buffer address
 	uint8_t			*pRxBuffer;	//Rx buffer address
 	uint32_t		TxLen;		//store Tx length

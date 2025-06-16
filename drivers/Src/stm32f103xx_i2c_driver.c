@@ -82,6 +82,8 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi) {
 void I2C_Init(I2C_Handle_t *pI2CHandle)
 {
 	uint32_t tempreg =0 ;
+	//enable the clock for the i2cx peripheral
+	I2C_PeriClockControl(pI2CHandle->pI2Cx,ENABLE);
 
 	//ack control bit
 	tempreg |= pI2CHandle->I2C_Config.I2C_ACKControl << I2C_CR1_ACK;
@@ -116,8 +118,21 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 		} else {
 			ccr_value =  (RCC_GetPCKL1Value())/(25*pI2CHandle->I2C_Config.I2C_SCLSpeed);
 		}
+		tempreg |= (ccr_value & 0xFFF);
 	}
 	pI2CHandle->pI2Cx->CCR = tempreg;
+
+	//TRISE configuration
+	if(pI2CHandle->I2C_Config.I2C_SCLSpeed <= I2C_SCL_SPEED_SM)
+	{
+		//mode is standard
+		tempreg =(RCC_GetPCKL1Value()/1000000U) +1 ;
+	} else {
+		//mode is fast
+		tempreg = ((RCC_GetPCKL1Value()*300)/1000000000U)+1;
+	}
+
+	pI2CHandle->pI2Cx->TRISE = (tempreg & 0x3F);
 }
 
 /***********************************************************************************
@@ -152,6 +167,8 @@ void I2C_DeInit(I2C_RegDef_t *pI2Cx);
  ************************************************************************************/
 void I2C_MasterSendData(I2C_Handle_t *pI2CHandle,uint8_t *pTxbuffer, uint32_t Len, uint8_t SlaveAddr,uint8_t Sr)
 {
+	 pI2CHandle->TxRxState = I2C_BUSY_IN_TX;
+
 	//1. Generation the start condition
 	I2C_GenerateStartCondition(pI2CHandle->pI2Cx);
 	//2. Confirm that start generation is completed by checking the SB flag in the SR1
@@ -192,6 +209,10 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle,uint8_t *pTxbuffer, uint32_t Le
 }
 
 
+void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle,uint8_t *pRxBuffer, uint8_t Len, uint8_t SlaveAddr,uint8_t Sr)
+{
+
+}
 // Other Peripheral Control APIS
 
 /***********************************************************************************
@@ -227,7 +248,7 @@ void I2C_GenerateStartCondition(I2C_RegDef_t *pI2Cx)
  ************************************************************************************/
 void I2C_GenerateStopCondition(I2C_RegDef_t *pI2Cx)
 {
-	pI2Cx->CR1 |= (1<<I2C_CR1_STOP);
+	pI2Cx->SR1 |= (1<<I2C_CR1_STOP);
 }
 
 /***********************************************************************************
