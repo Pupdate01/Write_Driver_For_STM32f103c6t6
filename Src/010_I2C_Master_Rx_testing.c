@@ -1,7 +1,7 @@
 /*
- * 009_I2C_Master_tx_testing.c
+ * 010_I2C_Master_Rx_testing.c
  *
- *  Created on: Jun 14, 2025
+ *  Created on: Jun 17, 2025
  *      Author: hiephuu2001
  */
 
@@ -14,8 +14,8 @@
 
 I2C_Handle_t I2C1Handle;
 
-//some data
-uint8_t some_data[] = "We are testing I2C master Tx\n";
+//rcv buffer
+uint8_t rcv_buf[32];
 
 void delay(void) {
 	for (uint32_t i = 0; i < 5000000 / 2; i++);
@@ -79,6 +79,7 @@ void GPIO_ButtonInit(void) {
 
 int main(void) {
 
+	uint8_t commandcode,Len;
 	//Config GPIO pin button
 	GPIO_ButtonInit();
 
@@ -101,7 +102,16 @@ int main(void) {
 		//to avoid button de-bouncing related issue 200ms delay
 		delay();
 
-		I2C_MasterSendData(&I2C1Handle, some_data, strlen((char*)some_data),SLAVE_ADDR, I2C_ENABLE_SR);
+		commandcode = 0x51;
+
+		I2C_MasterSendData(&I2C1Handle,&commandcode , 1, SLAVE_ADDR, I2C_ENABLE_SR);
+
+		I2C_MasterReceiveData(&I2C1Handle, &Len, 1, SLAVE_ADDR, I2C_ENABLE_SR);
+
+		commandcode = 0x52;
+		I2C_MasterSendData(&I2C1Handle,&commandcode , 1, SLAVE_ADDR, I2C_ENABLE_SR);
+
+		I2C_MasterReceiveData(&I2C1Handle, rcv_buf, Len, SLAVE_ADDR, I2C_ENABLE_SR);
 	}
 
 }
