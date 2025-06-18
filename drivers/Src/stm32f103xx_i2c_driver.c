@@ -87,12 +87,12 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 	I2C_PeriClockControl(pI2CHandle->pI2Cx,ENABLE);
 
 	//ack control bit
-	tempreg |= pI2CHandle->I2C_Config.I2C_ACKControl << I2C_CR1_ACK;
+	tempreg |= (pI2CHandle->I2C_Config.I2C_ACKControl << I2C_CR1_ACK);
 	pI2CHandle->pI2Cx->CR1 = tempreg;
 
 	//config the FREQ field field of CR2
 	tempreg = 0;
-	tempreg |= RCC_GetPCKL1Value()/1000000U;
+	tempreg |= (RCC_GetPCKL1Value()/1000000U);
 	pI2CHandle->pI2Cx->CR2 = tempreg & 0x3F;
 
 	//program the device own address
@@ -168,10 +168,11 @@ void I2C_DeInit(I2C_RegDef_t *pI2Cx);
  ************************************************************************************/
 void I2C_MasterSendData(I2C_Handle_t *pI2CHandle,uint8_t *pTxbuffer, uint32_t Len, uint8_t SlaveAddr,uint8_t Sr)
 {
-	 pI2CHandle->TxRxState = I2C_BUSY_IN_TX;
+	 //pI2CHandle->TxRxState = I2C_BUSY_IN_TX;
 
 	//1. Generation the start condition
 	I2C_GenerateStartCondition(pI2CHandle->pI2Cx);
+
 	//2. Confirm that start generation is completed by checking the SB flag in the SR1
 	//   Note: Until SB is cleared SCL will be stretched (pulled to LOW)
 	while(!I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_SB));
@@ -187,13 +188,13 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle,uint8_t *pTxbuffer, uint32_t Le
 	I2C_ClearADDRFlag(pI2CHandle);
 
 	//6.send the data until len becomes 0
-	while(Len > 0)
-	{
-		while( !I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_TXE)); //wait till TXE is set
-		pI2CHandle->pI2Cx->DR = *pTxbuffer;
-		pTxbuffer++;
-		Len--;
-	}
+//	while(Len > 0)
+//	{
+//		while( !I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_TXE)); //wait till TXE is set
+//		pI2CHandle->pI2Cx->DR = *pTxbuffer;
+//		pTxbuffer++;
+//		Len--;
+//	}
 	//7. when Len becomes zero wait for TXE=1 and BTF=1 before generating the STOP condition
 	//   Note: TXE=1 , BTF=1 , means that both SR and DR are empty and next transmission should begin
 	//   when BTF=1 SCL will be stretched (pulled to LOW)

@@ -18,7 +18,7 @@ I2C_Handle_t I2C1Handle;
 uint8_t rcv_buf[32];
 
 void delay(void) {
-	for (uint32_t i = 0; i < 5000000 / 2; i++);
+	for (uint32_t i = 0; i < 500000 / 2; i++);
 }
 
 /*
@@ -95,6 +95,9 @@ int main(void) {
 	//enable the I2C peripheral
 	I2C_PeripheralControl(I2C1, ENABLE);
 
+	//ack bit is made 1 after PE=1
+	I2C_ManageAcking(I2C1, I2C_ACK_ENABLE);
+
 	while (1) {
 		//wait till button is pressed
 		//while (!GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_12));
@@ -111,7 +114,9 @@ int main(void) {
 		commandcode = 0x52;
 		I2C_MasterSendData(&I2C1Handle,&commandcode , 1, SLAVE_ADDR, I2C_ENABLE_SR);
 
-		I2C_MasterReceiveData(&I2C1Handle, rcv_buf, Len, SLAVE_ADDR, I2C_ENABLE_SR);
+		I2C_MasterReceiveData(&I2C1Handle, rcv_buf, Len, SLAVE_ADDR, I2C_DISABLE_SR);
+
+		rcv_buf[Len+1] = '\0';
 	}
 
 }
