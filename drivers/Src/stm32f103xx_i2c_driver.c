@@ -188,13 +188,13 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle,uint8_t *pTxbuffer, uint32_t Le
 	I2C_ClearADDRFlag(pI2CHandle);
 
 	//6.send the data until len becomes 0
-//	while(Len > 0)
-//	{
-//		while( !I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_TXE)); //wait till TXE is set
-//		pI2CHandle->pI2Cx->DR = *pTxbuffer;
-//		pTxbuffer++;
-//		Len--;
-//	}
+	while(Len > 0)
+	{
+		while( !I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_FLAG_TXE)); //wait till TXE is set
+		pI2CHandle->pI2Cx->DR = *pTxbuffer;
+		pTxbuffer++;
+		Len--;
+	}
 	//7. when Len becomes zero wait for TXE=1 and BTF=1 before generating the STOP condition
 	//   Note: TXE=1 , BTF=1 , means that both SR and DR are empty and next transmission should begin
 	//   when BTF=1 SCL will be stretched (pulled to LOW)
