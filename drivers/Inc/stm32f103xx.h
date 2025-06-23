@@ -8,6 +8,7 @@
 #ifndef INC_STM32F103XX_H_
 #define INC_STM32F103XX_H_
 #include<stdint.h>
+#include<stddef.h>
 
 #define __vo 							volatile
 #define __weak 							__attribute__((weak))
@@ -340,12 +341,12 @@ typedef struct {
 #define IRQ_NO_EXTI4 					10
 #define IRQ_NO_EXTI9_5 					23
 #define IRQ_NO_EXTI15_10 				40
-#define IQR_NO_SPI1						35
-#define IQR_NO_SPI2						36
-#define IQR_NO_I2C1_EV					31
-#define IQR_NO_I2C1_ER					32
-#define IQR_NO_I2C2_EV					33
-#define IQR_NO_I2C2_ER					34
+#define IRQ_NO_SPI1						35
+#define IRQ_NO_SPI2						36
+#define IRQ_NO_I2C1_EV					31
+#define IRQ_NO_I2C1_ER					32
+#define IRQ_NO_I2C2_EV					33
+#define IRQ_NO_I2C2_ER					34
 
 /*
  * Macros for all IRQ Priority levels
