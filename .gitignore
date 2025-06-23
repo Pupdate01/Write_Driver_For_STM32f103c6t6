@@ -5,9 +5,11 @@
 *.elf
 *.map
 *.mk
+*.ld
 
 # Ignore STM32CubeIDE folders
 /build/
 Debug/
 Release/
 drivers/Src/subdir.mk
+/STM32F103C6TX_FLASH.ld
