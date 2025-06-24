@@ -141,6 +141,7 @@ void USART_Init(USART_Handle_t *pUSARTHandle)
 /******************************** Configuration of BRR(Baudrate register)******************************************/
 
 	//Implement the code to configure the baud rate
+	USART_SetBaudRate(pUSARTHandle->pUSARTx, pUSARTHandle->USART_Config.USART_Baud);
 
 }
 
@@ -185,8 +186,7 @@ void USART_SendData(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32_t Le
 			{
 				//No parity is used in this transfer. so, 9bits of user data will be sent
 				//Implement the code to increment pTxBuffer twice
-				pTxBuffer++;
-				pTxBuffer++;
+				pTxBuffer += 2;
 			}
 			else
 			{
@@ -257,8 +257,41 @@ void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_
 		}
 	}
 }
-uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32_t Len);
-uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len);
+uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32_t Len)
+{
+	uint8_t	txstate = pUSARTHandle->TxBusyState;
+
+	if( txstate != USART_BUSY_IN_TX )
+	{
+		pUSARTHandle -> TxLen = Len;
+		pUSARTHandle -> pTxBuffer = pTxBuffer;
+		pUSARTHandle -> TxBusyState = USART_BUSY_IN_TX;
+
+		//Implement the code to enable interrupt for TXE
+		pUSARTHandle->pUSARTx->CR1 |= (1<<USART_CR1_TXEIE);
+
+		//Implement the code to enable interrupt for TC
+		pUSARTHandle->pUSARTx->CR1 |= ( 1<<USART_CR1_TCIE );
+	}
+	return txstate;
+}
+uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len)
+{
+	uint8_t rxstate = pUSARTHandle->RxBusyState;
+
+	if(rxstate != USART_BUSY_IN_RX)
+	{
+		pUSARTHandle->RxLen = Len;
+		pUSARTHandle->pRxBuffer = pRxBuffer;
+		pUSARTHandle->RxBusyState = USART_BUSY_IN_RX;
+
+		(void)pUSARTHandle->pUSARTx->DR;
+
+		//Implement the code to enable interrupt for RXNE
+		pUSARTHandle->pUSARTx->CR1 |= (1<<USART_CR1_RXNEIE);
+	}
+	return rxstate;
+}
 
 /*
  * IRQ Configuration and ISR handling
@@ -333,9 +366,10 @@ void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority)
 	uint8_t iprx = IRQNumber / 4;
 	uint8_t iprx_section  = IRQNumber %4 ;
 
-	uint8_t shift_amount = ( 8 * iprx_section) + ( 8 - NO_PR_BITS_IMPLEMENTED) ;
+	uint8_t shift_amount = (8 * iprx_section) + (8 - NO_PRIOR_BITS_IMPLEMENTED);
 
-	*(  NVIC_PR_BASE_ADDR + iprx ) |=  ( IRQPriority << shift_amount );
+	*(NVIC_PRIOR_BASE_ADDR + iprx) &= ~(0xFF << shift_amount); //clear this bit
+	*(NVIC_PRIOR_BASE_ADDR + iprx) |= (IRQPriority << (8 * shift_amount));
 
 }
 void USART_IRQHandling(USART_Handle_t *pHandle);
@@ -343,7 +377,17 @@ void USART_IRQHandling(USART_Handle_t *pHandle);
 /*
  * Other Peripheral Control APIs
  */
-void USART_PeripheralControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
+void USART_PeripheralControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi)
+{
+	if(EnOrDi == ENABLE)
+	{
+		pUSARTx->CR1 |= (1 << USART_CR1_UE);
+	}else
+	{
+		pUSARTx->CR1 &= ~(1 << USART_CR1_UE);
+	}
+
+}
 
 /***********************************************************************************
  * @fn							- USART_GetFlagStatus
@@ -383,7 +427,44 @@ void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint16_t StatusFlagName);
  ************************************************************************************/
 void USART_SetBaudRate(USART_RegDef_t *pUSARTx,uint32_t BaudRate)
 {
+	//Variable to hold the APB clock
+	uint32_t PCLKx;
 
+	uint32_t usartdiv;
+
+	//variables to hold Mantissa and Fraction values
+	uint32_t M_part,F_part;
+
+	uint32_t tempreg=0;
+
+	//Get the value of APB bus clock in to the variable PCLKx
+	if(pUSARTx == USART1){
+		//USART1 is hanging on APB2 bus
+		PCLKx = RCC_GetPCKL2Value();
+	} else {
+		PCLKx = RCC_GetPCKL1Value();
+	}
+
+	//over sampling by 16
+	usartdiv = ((25*PCLKx)/(4*BaudRate));
+
+	//calculate the mantissa part
+	M_part = usartdiv/100;
+
+	//Place the Mantissa part in appropriate bit position
+	tempreg |= M_part << 4;
+
+	//Extract the fraction part
+	F_part = (usartdiv - (M_part * 100));
+
+	//Calculate the final fractional
+	F_part = (((F_part*16)+50)/100)&((uint8_t)0x0F);
+
+	//Place the fractional part in appropriate bit position . refer USART
+	tempreg |= F_part << 0;
+
+	//copy the value of tempreg in to BRR register
+	pUSARTx->BRR = tempreg;
 }
 
 
