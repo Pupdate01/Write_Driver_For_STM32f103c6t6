@@ -208,15 +208,136 @@ void USART_SendData(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32_t Le
 }
 
 
-void USART_ReceiveData(USART_Handle_t *pUSARTx, uint8_t *pRxBuffer, uint32_t Len);
+void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len)
+{
+	//Loop over until "Len" number of bytes are transferred
+	for(uint32_t i = 0; i < Len;i++)
+	{
+		//Implement the code to wait until RXNE flag is set in the SR
+		while(!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USART_FLAG_RNXE));
+
+		//Check the USART_WordLength to decide whether we are going to receive 9bit of data in a frame or 8 bit
+		if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_9BITS)
+		{
+			//We are going to receive 9bit data in a frame
+
+			//Now, check are we using USART_ParityControl control or not
+			if(pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE)
+			{
+				//No parity is used , so all 9bits will be of user data
+
+				//read only first 9 bits so mask the DR with 0x01FF
+				*((uint16_t*)pRxBuffer) = (pUSARTHandle->pUSARTx->DR & (uint16_t)0x01FF);
+
+				//now incremenr the pRxBuffer two times
+				pRxBuffer += 2;
+			}else{
+				//Parity is used, so 8bits will be of user data and 1 bit is parity
+				*pRxBuffer = (pUSARTHandle->pUSARTx->DR & (uint8_t)0xFF);
+				pRxBuffer++;
+			}
+		}else {
+				//We are going to receive 8bit data in a frame
+
+				//Now, check are we using USART_ParityControl control or not
+				if(pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE)
+				{
+					//No parity is used , so all 8bits will be of user data
+
+					//read 8 bits from DR
+					*pRxBuffer = (uint8_t) (pUSARTHandle->pUSARTx->DR && (uint8_t)0xFF);
+				} else {
+					//Parity is used, so , 7 bits will be of user data and 1 bit is parity
+
+					//read only 7 bits , hence mask the DR with 0X7F
+					*pRxBuffer = (uint8_t)(pUSARTHandle->pUSARTx->DR & (uint8_t)0x7F);
+				}
+				//Now , increment the pRxBuffer
+				pRxBuffer++;
+		}
+	}
+}
 uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32_t Len);
 uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len);
 
 /*
  * IRQ Configuration and ISR handling
  */
-void USART_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi);
-void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
+/***********************************************************************************
+ * @fn							- USART_IRQInterruptConfig
+ *
+ * @brief						-
+ *
+ * param[in]					-
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+void USART_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi)
+{
+	if(EnorDi == ENABLE)
+		{
+			if(IRQNumber <= 31)
+			{
+				//program ISER0 register
+				*NVIC_ISER0 |= ( 1 << IRQNumber );
+
+			}else if(IRQNumber > 31 && IRQNumber < 64 ) //32 to 63
+			{
+				//program ISER1 register
+				*NVIC_ISER1 |= ( 1 << (IRQNumber % 32) );
+			}
+			else if(IRQNumber >= 64 && IRQNumber < 96 )
+			{
+				//program ISER2 register //64 to 95
+				*NVIC_ISER3 |= ( 1 << (IRQNumber % 64) );
+			}
+		}else
+		{
+			if(IRQNumber <= 31)
+			{
+				//program ICER0 register
+				*NVIC_ICER0 |= ( 1 << IRQNumber );
+			}else if(IRQNumber > 31 && IRQNumber < 64 )
+			{
+				//program ICER1 register
+				*NVIC_ICER1 |= ( 1 << (IRQNumber % 32) );
+			}
+			else if(IRQNumber >= 6 && IRQNumber < 96 )
+			{
+				//program ICER2 register
+				*NVIC_ICER3 |= ( 1 << (IRQNumber % 64) );
+			}
+		}
+}
+
+/***********************************************************************************
+ * @fn							- USART_IRQPriorityConfig
+ *
+ * @brief						-
+ *
+ * param[in]					-
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority)
+{
+	//1. first lets find out the ipr register
+	uint8_t iprx = IRQNumber / 4;
+	uint8_t iprx_section  = IRQNumber %4 ;
+
+	uint8_t shift_amount = ( 8 * iprx_section) + ( 8 - NO_PR_BITS_IMPLEMENTED) ;
+
+	*(  NVIC_PR_BASE_ADDR + iprx ) |=  ( IRQPriority << shift_amount );
+
+}
 void USART_IRQHandling(USART_Handle_t *pHandle);
 
 /*
