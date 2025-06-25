@@ -207,7 +207,19 @@ void USART_SendData(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32_t Le
 	while(!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USART_FLAG_TC));
 }
 
-
+/***********************************************************************************
+ * @fn							- USART_ReceiveData
+ *
+ * @brief						-
+ *
+ * param[in]					-
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
 void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len)
 {
 	//Loop over until "Len" number of bytes are transferred
@@ -257,6 +269,20 @@ void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_
 		}
 	}
 }
+
+/***********************************************************************************
+ * @fn							- USART_SendDataIT
+ *
+ * @brief						-
+ *
+ * param[in]					-
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
 uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32_t Len)
 {
 	uint8_t	txstate = pUSARTHandle->TxBusyState;
@@ -275,6 +301,20 @@ uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32
 	}
 	return txstate;
 }
+
+/***********************************************************************************
+ * @fn							- USART_ReceiveDataIT
+ *
+ * @brief						-
+ *
+ * param[in]					-
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
 uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len)
 {
 	uint8_t rxstate = pUSARTHandle->RxBusyState;
@@ -377,6 +417,19 @@ void USART_IRQHandling(USART_Handle_t *pHandle);
 /*
  * Other Peripheral Control APIs
  */
+/***********************************************************************************
+ * @fn							- USART_PeripheralControl
+ *
+ * @brief						-
+ *
+ * param[in]					-
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
 void USART_PeripheralControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi)
 {
 	if(EnOrDi == ENABLE)
@@ -410,7 +463,23 @@ uint8_t USART_GetFlagStatus(USART_RegDef_t *pUSARTx , uint32_t FlagName){
 	return RESET;
 }
 
-void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint16_t StatusFlagName);
+/***********************************************************************************
+ * @fn							- USART_ClearFlag
+ *
+ * @brief						-
+ *
+ * param[in]					-
+ * param[in]					-
+ * param[in]					-
+ *
+ * @return						- none
+ *
+ * @Note						- none
+ ************************************************************************************/
+void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint16_t StatusFlagName)
+{
+	pUSARTx->SR = ~(StatusFlagName);
+}
 
 /***********************************************************************************
  * @fn							- USART_SetBaudRate
@@ -471,4 +540,7 @@ void USART_SetBaudRate(USART_RegDef_t *pUSARTx,uint32_t BaudRate)
 /*
  * Application callback
  */
-void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle,uint8_t AppEv);
+void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle,uint8_t AppEv)
+{
+
+}
